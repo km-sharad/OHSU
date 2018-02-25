@@ -175,9 +175,14 @@ class Vgg16:
         var_list = []
         var_list = tf.get_collection(tf.GraphKeys.TRAINABLE_VARIABLES)
 
-        train_step = tf.train.GradientDescentOptimizer(0.5).minimize(cross_entropy, var_list=var_list)
+        opt_var_list = tf.train.GradientDescentOptimizer(0.5).minimize(cross_entropy, var_list=var_list)
         # train_step = tf.train.GradientDescentOptimizer(0.5).minimize(cross_entropy)        
 
-        # return train_step
-        return var_list
+        return opt_var_list
+        # return var_list
+
+    def test(self, prob, gt):     
+        correct_prediction = tf.equal(tf.argmax(prob, 1), tf.argmax(gt, 1))   
+        accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
+        return accuracy
         
