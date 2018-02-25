@@ -38,19 +38,11 @@ with tf.device('/cpu:0'):
         vgg = vgg16_cat_and_dog.Vgg16()
         with tf.name_scope("content_vgg"):
             vgg.build(images, gt)
-        sess.run(tf.global_variables_initializer())                                
+        sess.run(tf.global_variables_initializer())
 
-        cross_entropy = tf.reduce_mean(
-                tf.nn.softmax_cross_entropy_with_logits(labels=gt, logits=vgg.prob))            
+        prob = vgg.prob
 
-        var_list = []
-        var_list.append(tf.get_collection('fc7/cat_vs_dog_weights_4096'))
-        var_list.append(tf.get_collection('fc7/cat_vs_dog_biases_4096'))
-        var_list.append(tf.get_collection('fc_cat_vs_dog/cat_vs_dog_weights'))
-        var_list.append(tf.get_collection('fc_cat_vs_dog/cat_vs_dog_biases'))        
-
-        # train_step = tf.train.GradientDescentOptimizer(0.5).minimize(cross_entropy, var_list=var_list)
-        train_step = tf.train.GradientDescentOptimizer(0.5).minimize(cross_entropy)
+        train_step = vgg.train(prob, gt)
 
         cat_image_names = os.listdir(str(data_dir) + 'cat/')
         dog_image_names = os.listdir(str(data_dir) + 'dog/')
@@ -64,8 +56,10 @@ with tf.device('/cpu:0'):
                     getBatchImages(cat_image_names[batch * batch_size : (batch * batch_size) + batch_size], \
                                 dog_image_names[batch * batch_size : (batch * batch_size) + batch_size])
 
-                sess.run(train_step, feed_dict={images: batch_images, gt: gt_1_hot_vec})
+                var_list = sess.run(train_step, feed_dict={images: batch_images, gt: gt_1_hot_vec})
                 print('batch: ', batch)
+                # print('var_list: ', var_list[0].shape, var_list[1].shape, var_list[2].shape, var_list[3].shape)
+
 
             # Save the variables to disk.
             # ckpt_file = './ckpt/model' + str(epoch) + '.ckpt'

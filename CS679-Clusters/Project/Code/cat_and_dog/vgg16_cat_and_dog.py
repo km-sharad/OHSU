@@ -129,9 +129,9 @@ class Vgg16:
             bias_initializer = tf.constant_initializer(1.0)
 
             # weights = tf.get_variable("cat_vs_dog_weights", layer_shape, weight_initializer)
-            weights = tf.get_variable("cat_vs_dog_weights_4096", weight_shape)
+            weights = tf.get_variable("cat_vs_dog_weights_4096", weight_shape, trainable=True)
             # biases = tf.get_variable("cat_vs_dog_biases", layer_shape, bias_initializer)
-            biases = tf.get_variable("cat_vs_dog_biases_4096", bias_shape)
+            biases = tf.get_variable("cat_vs_dog_biases_4096", bias_shape, trainable=True)
 
             fc = tf.nn.bias_add(tf.matmul(x, weights), biases)
 
@@ -151,9 +151,9 @@ class Vgg16:
             bias_initializer = tf.constant_initializer(1.0)
 
             # weights = tf.get_variable("cat_vs_dog_weights", layer_shape, weight_initializer)
-            weights = tf.get_variable("cat_vs_dog_weights", weight_shape)
+            weights = tf.get_variable("cat_vs_dog_weights", weight_shape, trainable=True)
             # biases = tf.get_variable("cat_vs_dog_biases", layer_shape, bias_initializer)
-            biases = tf.get_variable("cat_vs_dog_biases", bias_shape)
+            biases = tf.get_variable("cat_vs_dog_biases", bias_shape, trainable=True)
 
             fc = tf.nn.bias_add(tf.matmul(x, weights), biases)
 
@@ -167,4 +167,17 @@ class Vgg16:
 
     def get_fc_weight(self, name):
         return tf.constant(self.data_dict[name][0], name="weights")
+
+    def train(self, prob, gt):
+        cross_entropy = tf.reduce_mean(
+                tf.nn.softmax_cross_entropy_with_logits(labels=gt, logits=prob))            
+
+        var_list = []
+        var_list = tf.get_collection(tf.GraphKeys.TRAINABLE_VARIABLES)
+
+        train_step = tf.train.GradientDescentOptimizer(0.5).minimize(cross_entropy, var_list=var_list)
+        # train_step = tf.train.GradientDescentOptimizer(0.5).minimize(cross_entropy)        
+
+        # return train_step
+        return var_list
         
