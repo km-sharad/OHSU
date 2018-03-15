@@ -64,7 +64,8 @@ with tf.device('/cpu:0'):
 
         start_time = time.time()
 
-        for batch in xrange(150):
+        # for batch in xrange(150):
+        for batch in xrange(1):
             batch_images, y = \
                 getTrainBatchImages(cat_image_names_train[batch * batch_size : (batch * batch_size) + batch_size], \
                             dog_image_names_train[batch * batch_size : (batch * batch_size) + batch_size])        
@@ -82,16 +83,21 @@ with tf.device('/cpu:0'):
             out_f.write('time taken for batch ' + str(batch) + ': ' + str(round(duration/float(60),2)) + '\n')
             out_f.close()                                 
 
+        out_f = open('out_train_file.txt', 'a+')
+        out_f.write('train y: ' + str(train_y))
+        out_f.close()        
+
         fit_start_time = time.time()
         print('training start time: ', fit_start_time)
         clf = svm.SVC(C=0.5, kernel='linear')
         training_output = clf.fit(train_x, train_y)  
-        print('training complete in: ', str(round((time.time() - fit_start_time)/float(60),2)))  
+        print('training complete in: ', str(time.time() - fit_start_time) + '\n')  
 
         test_x = []
         test_y = []        
-        for batch in xrange(50):
-            batch_images_test, test_y = \
+        # for batch in xrange(50):
+        for batch in xrange(1):
+            batch_images_test, y = \
                 getTestBatchImages(cat_image_names_test[batch * batch_size : (batch * batch_size) + batch_size], \
                         dog_image_names_test[batch * batch_size : (batch * batch_size) + batch_size])                                            
 
@@ -99,23 +105,36 @@ with tf.device('/cpu:0'):
 
             for x in xrange(test_activations.shape[0]):
                 test_x.append(test_activations[x])
-                test_y.append(test_y[x])
+                test_y.append(y[x])
 
             duration = time.time() - start_time
             out_f = open('out_test_file.txt', 'a+')
             out_f.write('time taken for batch ' + str(batch) + ': ' + str(round(duration/float(60),2)) + '\n')
-            out_f.close()                                                 
+            out_f.close()
 
+        print('len test x: ', len(test_x))
+        print('len test y: ', len(test_y))
         test_start_time = time.time()
         print('testing start time: ', test_start_time)
         testing_output = clf.predict(test_x)
-        print('testing complete in: ', str(round((time.time() - test_start_time)/float(60),2)))  
+        print('testing end time: ', time.time())
+
+        # print('testing complete in: ', str(round((time.time() - test_start_time)/float(60),2)))  
+        print('testing complete in: ', str(time.time() - test_start_time))
 
         hit = 0.0
-        for real, predicted in zip (test_y, testing_output):
+        for real, predicted in zip(test_y, testing_output):
             if(real == predicted):
                 hit = hit + 1.0
 
+        out_f = open('out_test_file.txt', 'a+')
+        out_f.write('test y: ' + str(test_y) + '\n')
+        out_f.write('testing_output: ' + str(testing_output) + '\n')
+        out_f.write('zip: ' + str(zip(test_y, testing_output)) + '\n')
+        out_f.close()                        
+
+        print('hit: ', hit)
+        print('len testing_output: ', len(testing_output))
         print('Accuracy: ', hit/len(testing_output))                              
 
 

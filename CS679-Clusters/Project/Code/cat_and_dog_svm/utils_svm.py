@@ -22,6 +22,19 @@ def load_image(path):
     crop_img = img[yy: yy + short_edge, xx: xx + short_edge]
     # resize to 224, 224
     resized_img = skimage.transform.resize(crop_img, (224, 224))
+
+    # print('one field: ', resized_img[123][211][1])
+
+    # resized_img_array = []    
+    # for i in xrange(3):
+    #     for j in xrange(224):
+    #         for k in xrange(224):
+    #             resized_img_array.append(resized_img[j][k][i])
+    # out_f = open('images_numpy.txt', 'a+')
+    # out_f.write(str(resized_img_array) + '\n')
+    # out_f.close()                            
+    # print(np.reshape(resized_img,224*224*3).shape)
+    # np.savetxt('images_numpy.txt', np.array(resized_img), fmt='%.2f')
     return resized_img
 
 
