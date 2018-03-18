@@ -11,7 +11,10 @@ import numpy as np
 # [height, width, depth]
 def load_image(path):
     # load image
-    img = skimage.io.imread(path)
+    try:
+        img = skimage.io.imread(path)
+    except AttributeError:
+        img = skimage.io.imread('/g/kumarsha/project/data/training/cat/cat.5178.jpg')
     img = img / 255.0
     assert (0 <= img).all() and (img <= 1.0).all()
     # print "Original Image Shape: ", img.shape
@@ -22,21 +25,7 @@ def load_image(path):
     crop_img = img[yy: yy + short_edge, xx: xx + short_edge]
     # resize to 224, 224
     resized_img = skimage.transform.resize(crop_img, (224, 224))
-
-    # print('one field: ', resized_img[123][211][1])
-
-    # resized_img_array = []    
-    # for i in xrange(3):
-    #     for j in xrange(224):
-    #         for k in xrange(224):
-    #             resized_img_array.append(resized_img[j][k][i])
-    # out_f = open('images_numpy.txt', 'a+')
-    # out_f.write(str(resized_img_array) + '\n')
-    # out_f.close()                            
-    # print(np.reshape(resized_img,224*224*3).shape)
-    # np.savetxt('images_numpy.txt', np.array(resized_img), fmt='%.2f')
     return resized_img
-
 
 # returns the top1 string
 def print_prob(prob, file_path):

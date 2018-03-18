@@ -169,21 +169,3 @@ class Vgg16:
     def get_fc_weight(self, name):
         return tf.constant(self.data_dict[name][0], name="weights")
 
-    # def train(self, prob, gt):
-    #     cross_entropy = tf.reduce_mean(
-    #             tf.nn.softmax_cross_entropy_with_logits(labels=gt, logits=prob))            
-
-    #     var_list = []
-    #     var_list = tf.get_collection(tf.GraphKeys.TRAINABLE_VARIABLES)
-
-    #     opt_var_list = tf.train.GradientDescentOptimizer(0.5).minimize(cross_entropy, var_list=var_list)
-    #     # train_step = tf.train.GradientDescentOptimizer(0.5).minimize(cross_entropy)        
-
-    #     return opt_var_list
-    #     # return var_list
-
-    # def test(self, prob, gt):     
-    #     correct_prediction = tf.equal(tf.argmax(prob, 1), tf.argmax(gt, 1))   
-    #     accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
-    #     return accuracy
-        
