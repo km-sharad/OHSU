@@ -1,0 +1,7 @@
+{
+    "envname":"venv",
+    "requirements":"requirements.txt",
+    "dir":"OFFSET",
+    "archive":"venv.zip",
+    "python":"python2.7"
+}
